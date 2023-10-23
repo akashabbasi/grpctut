@@ -1,5 +1,8 @@
 syntax = "proto3";
+
 package akashabbasi.pcbook;
+
+option go_package = "./;pb";
 
 message Memory {
   enum Unit {
