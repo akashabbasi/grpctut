@@ -57,7 +57,10 @@ func startTestLaptopServer(
 	return laptopServer, listener.Addr().String()
 }
 
-func newTestLaptopClient(t *testing.T, serverAddr string) pb.LaptopServiceClient {
+func newTestLaptopClient(
+	t *testing.T,
+	serverAddr string,
+) pb.LaptopServiceClient {
 	conn, err := grpc.Dial(serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	require.NoError(t, err)
 	return pb.NewLaptopServiceClient(conn)
