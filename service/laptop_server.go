@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"time"
 
 	"github.com/akashabbasi/pcbook/pb"
 	"github.com/google/uuid"
@@ -34,20 +35,37 @@ func (server *LaptopServer) CreateLaptop(
 	if len(laptop.Id) > 0 {
 		_, err := uuid.Parse(laptop.Id)
 		if err != nil {
-			return nil, status.Errorf(codes.InvalidArgument, "laptop id is not a valid UUID: %v", err)
+			return nil, status.Errorf(
+				codes.InvalidArgument,
+				"laptop id is not a valid UUID: %v", err,
+			)
 		}
 	} else {
 		id, err := uuid.NewRandom()
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, "cannot generate a laptop id: %v", err)
+			return nil, status.Errorf(
+				codes.Internal,
+				"cannot generate a laptop id: %v",
+				err,
+			)
 		}
 
 		laptop.Id = id.String()
 	}
 
+	time.Sleep(6 * time.Second)
+	if ctx.Err() == context.Canceled {
+		log.Printf("request is canceled")
+		return nil, status.Error(codes.Canceled, "request is canceled")
+	}
+
+	if ctx.Err() == context.DeadlineExceeded {
+		log.Printf("deadline is exceeded")
+		return nil, status.Error(codes.DeadlineExceeded, "deadline is exceeded")
+	}
+
 	// save the laptop in database
 	err := server.Store.Save(laptop)
-	log.Println(err)
 	if err != nil {
 		code := codes.Internal
 		if errors.Is(err, ErrAlreadyExists) {

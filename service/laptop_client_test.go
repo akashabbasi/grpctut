@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func TestClientCreateLapt(t *testing.T) {
+func TestClientCreateLaptop(t *testing.T) {
 	laptopServer, serverAddr := startTestLaptopServer(t)
 	laptopClient := newTestLaptopClient(t, serverAddr)
 
@@ -38,8 +38,12 @@ func TestClientCreateLapt(t *testing.T) {
 	requireSameLaptop(t, laptop, other)
 }
 
-func startTestLaptopServer(t *testing.T) (*service.LaptopServer, string) {
-	laptopServer := service.NewLaptopServer(service.NewInMemoryLaptopStore())
+func startTestLaptopServer(
+	t *testing.T,
+) (*service.LaptopServer, string) {
+	laptopServer := service.NewLaptopServer(
+		service.NewInMemoryLaptopStore(),
+	)
 
 	grpcServer := grpc.NewServer()
 
